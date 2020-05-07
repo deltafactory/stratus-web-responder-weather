@@ -100,6 +100,7 @@ else if ($_REQUEST["case"] == "playzip") {
 
   $speech = getWeather($_REQUEST["Digits"]);
 
+  # Try to create the wav file
   try {
     $audioPath = awsSpeech($speech);
   } catch ( Exception $e ) {
