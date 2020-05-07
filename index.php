@@ -3,6 +3,8 @@ require "creds.php";
 session_start();
 header("Content-Type: text/xml");
 
+# The current weather for Coppell is sunny  and 90 degrees. Expect a high tomorrow of 91 with a forcast of clouds.
+
 echo '<?xml version="1.0" encoding="UTF-8" standalone="no" ?>';
 
 function gather($digits,$action,$audio)
@@ -22,41 +24,38 @@ function forward($location)
   echo "<Forward >$location</Forward>";
 }
 
-
-
-function yahooZip($zip)
+function getWeather($zip)
 {
-    $BASE_URL = "http://query.yahooapis.com/v1/public/yql";
-    $yql_query = 'select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="'.$zip.'")';
-    $yql_query_url = $BASE_URL . "?q=" . urlencode($yql_query) . "&format=json";
-    // Make call with cURL
-    $session = curl_init($yql_query_url);
+    global $openweathermapkey;
+
+    $BASE_URL = "https://api.openweathermap.org/data/2.5/weather?zip=$zip,us&appid=$openweathermapkey";
+    $session = curl_init($BASE_URL);
     curl_setopt($session, CURLOPT_RETURNTRANSFER,true);
     $json = curl_exec($session);
-    // Convert JSON to PHP object
     $phpObj =  json_decode($json,true);
-    //print_r($phpObj);
 
-    $city = $phpObj['query']['results']['channel']['location']['city'];
+#    echo "$BASE_URL\n";
+#    print_r($phpObj);
 
-    $currentText = $phpObj['query']['results']['channel']['item']['condition']['text'];
-    $currentTemp = $phpObj['query']['results']['channel']['item']['condition']['temp'];
+    if ( isset($phpObj['name']) ) {
+        $temp         = round( 9/5*($phpObj['main']['temp']-273.15)+32 );    # F
+        $city         = $phpObj['name'];
+        $weather_desc = $phpObj['weather'][0]['description'];
+        $wind         = round( $phpObj['wind']['speed'] );
+        $humidity     = $phpObj['main']['humidity'];
 
-    $tomorrowText = $phpObj['query']['results']['channel']['item']['forecast'][1]['text'];
-    $tomorrowTemp = $phpObj['query']['results']['channel']['item']['forecast'][1]['high'];
-
-    $speech = "The current weather for ".$city." is ".$currentText." and ".$currentTemp." degrees. ";
-    $speech .= "Expect a high tomorrow of ". $tomorrowTemp. " with a forcast of ". $tomorrowText;
-
+        $speech = "The current temperature for $city is $temp degrees.     $weather_desc with humidity at $humidity percent    and wind of $wind miles per hour.";
+    } else {
+        $speech = "Sorry but we could not find that ZIP Code.";
+    }
     return $speech;
-
 }
 
 function awsSpeech($speech)
 {
     global $aws_token;
     global $aws_key;
-    
+
     require 'vendor/autoload.php';
     $s3 = new Aws\Polly\PollyClient([
       'version'     => 'latest',
@@ -73,7 +72,8 @@ function awsSpeech($speech)
         'SampleRate' => '8000',
         'Text' => $speech,
         'TextType' => 'text',
-        'VoiceId' => 'Joanna',
+#        'VoiceId' => 'Joanna',
+        'VoiceId' => 'Salli',
     ]);
 
     $tmpName = "polly".uniqid();
@@ -83,24 +83,30 @@ function awsSpeech($speech)
       '.wav '."/tmp/".$tmpName.'.mp3';
     $cmd2 = '/usr/bin/sox '."/tmp/".$tmpName.'.wav '.
       ' -e mu-law -r 8000 -c 1 -b 8 '."audio/".$tmpName.".wav";
-    exec($cmd1);
-    exec($cmd2);
+    $out1 = exec($cmd1);
+    $out2 = exec($cmd2);
+#    echo "out1: $out1\n";
+#    echo "out2: $out2\n";
     return "audio/".$tmpName.".wav";
 }
 
 
 
 if (!isset($_REQUEST["case"])) {
-  $speech = "Thank you for calling the NetSapiens UGM weather application. ";
-  $speech .= "Please enter a zip code to get a weather report";
-  gather(5,"weather.php?case=playzip",awsSpeech($speech));
+  gather(5,"index.php?case=playzip","audio_perm/weather_announcement.wav");
 
 }
 else if ($_REQUEST["case"] == "playzip") {
 
-  $speech = yahooZip($_REQUEST["Digits"]);
+  $speech = getWeather($_REQUEST["Digits"]);
 
-  $audioPath = awsSpeech($speech);
+  try {
+    $audioPath = awsSpeech($speech);
+  } catch ( Exception $e ) {
+    $audioPath = "audio_perm/aws_error.wav";
+  }
 
-  play("weather.php",$audioPath);
+  play("index.php",$audioPath);
 }
+
+?>
