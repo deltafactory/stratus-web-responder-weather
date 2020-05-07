@@ -8,7 +8,7 @@ Contact our [Help Desk](https://www.spectrumvoip.com) as we will need to work wi
 1. Queries https://openweathermap.org/ with that ZIP code and gets back the current weather.
 1. Uses Amazon Polly text to speech to create a wav file of the returned data.
 1. Causes Stratus to play that wav file.
-1. Repeats waiting for another zip.
+1. Hangs up the call.
 
 Notes:
 * Requires /usr/bin/mpg123 and /usr/bin/sox to convert audio files created by Polly to format compatible with Stratus.
