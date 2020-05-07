@@ -1,7 +1,7 @@
 <?php
 
 $aws_token='xxxxx';
-$aws_key='yyyyy';
+$aws_key='123456;
 
 $openweathermapkey = 'zzzzz';
 
