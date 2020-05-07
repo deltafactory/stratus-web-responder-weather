@@ -99,27 +99,32 @@ function awsSpeech($speech)
     return "audio_temp/".$tmpName.".wav";
 }
 
-
+# Main Logic
 
 if (!isset($_REQUEST["case"])) {
+  # Nothing received yet.
   gather(5,"index.php?case=playzip","audio_perm/weather_announcement.wav");
 
 }
 else if ($_REQUEST["case"] == "playzip") {
 
+  # We should have a zip now
   $speech = getWeather($_REQUEST["Digits"]);
 
   if ( $speech ) {
     try {
+      # Weather data retrieved convert to speech/wav
       $audioPath = awsSpeech($speech);
     } catch ( Exception $e ) {
+      # Couldn't convert to speech so play pre-recorded message
       $audioPath = "audio_perm/sorry_no_polly.wav";
     }
   } else {
+    # Couldn't get the weather data so play pre-recorded message
     $audioPath = "audio_perm/sorry_cant_find_zip.wav";
   }
 
-#  play($audioPath, "index.php");
+  # Play the weather and hang up
   play($audioPath);
 }
 
