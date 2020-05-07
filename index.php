@@ -12,9 +12,13 @@ function gather($digits,$action,$audio)
   echo "</Gather>";
 }
 
-function play($action,$audio)
+function play($audio, $action)
 {
-  echo "<Play action='$action'>$audio</Play>";
+  if ( isset($action) ) {
+    echo "<Play action='$action'>$audio</Play>";
+  } else {
+    echo "<Play>$audio</Play>";
+  }
 }
 
 function forward($location)
@@ -32,6 +36,8 @@ function getWeather($zip)
     $json = curl_exec($session);
     $phpObj =  json_decode($json,true);
 
+#    print_r($phpObj);
+
     if ( isset($phpObj['name']) ) {
         $temp         = round( 9/5*($phpObj['main']['temp']-273.15)+32 );    # F
         $city         = $phpObj['name'];
@@ -39,7 +45,7 @@ function getWeather($zip)
         $wind         = round( $phpObj['wind']['speed'] );
         $humidity     = $phpObj['main']['humidity'];
 
-        $speech = "The current temperature for $city is $temp degrees.     $weather_desc with humidity at $humidity percent    and wind of $wind miles per hour.";
+        $speech = "<speak>The current temperature for $city is $temp degrees.<break/>     $weather_desc with humidity at $humidity percent<break/> and wind of $wind miles per hour<break/><break/><break/>Thanks</speak>";
     } else {
         $speech = 0;
     }
@@ -66,7 +72,7 @@ function awsSpeech($speech)
         'OutputFormat' => 'mp3',
         'SampleRate' => '8000',
         'Text' => $speech,
-        'TextType' => 'text',
+        'TextType' => 'ssml',
 #        'VoiceId' => 'Joanna',
         'VoiceId' => 'Salli',
     ]);
@@ -103,7 +109,8 @@ else if ($_REQUEST["case"] == "playzip") {
     $audioPath = "audio_perm/sorry_cant_find_zip.wav";
   }
 
-  play("index.php",$audioPath);
+#  play($audioPath, "index.php");
+  play($audioPath);
 }
 
 ?>
