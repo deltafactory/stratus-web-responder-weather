@@ -1,5 +1,5 @@
 <?php
-require "creds.php";
+require "includes/creds.php";
 session_start();
 header("Content-Type: text/xml");
 

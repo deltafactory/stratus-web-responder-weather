@@ -2,7 +2,7 @@
 
 This sample creates a Web Responder for our Stratus platform that:
 
-1. Causes Stratus to pPlays an announcement and wait for a 5 digit US ZIP code.
+1. Causes Stratus to Plays an announcement and wait for a 5 digit US ZIP code.
 2. Queries https://openweathermap.org/ with that ZIP code and gets back the current weather.
 3. Uses Amazon Polly text to speech to create a wav file of the returned data.
 4. Causes Stratus to play that wav file
