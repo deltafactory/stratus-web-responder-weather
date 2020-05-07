@@ -1,8 +1,8 @@
 <?php
 
-$aws_token='1';
+$aws_token='xxxxx';
 $aws_key='yyyyy';
 
-$openweathermapkey = '8zzzzz';
+$openweathermapkey = 'zzzzz';
 
 ?>
