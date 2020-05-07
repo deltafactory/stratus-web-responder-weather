@@ -44,11 +44,11 @@ numDigits
 the number of digits to gather, e.g., '1' (default=20)
 For example,
 ```
-Gather numDigits='3' action='handle-account-number.php'>
+<Gather numDigits='3' action='handle-account-number.php'>
  <Play>
   http://www.example.com/what-is-your-account-number.wav
  </Play>
- <Gather>
+<Gather>
 ```
 This gathers 3 digits and posts back the relative URL handle-account-number.php?Digits=555.
 The <Gather> verb posts back to the given action URL with the following parameters:
