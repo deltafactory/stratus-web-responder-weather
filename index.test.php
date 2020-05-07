@@ -3,6 +3,8 @@ require "includes/creds.php";
 session_start();
 header("Content-Type: text/xml");
 
+# The current weather for Coppell is sunny  and 90 degrees. Expect a high tomorrow of 91 with a forcast of clouds.
+
 echo '<?xml version="1.0" encoding="UTF-8" standalone="no" ?>';
 
 function gather($digits,$action,$audio)
@@ -32,6 +34,9 @@ function getWeather($zip)
     $json = curl_exec($session);
     $phpObj =  json_decode($json,true);
 
+#    echo "$BASE_URL\n";
+#    print_r($phpObj);
+
     if ( isset($phpObj['name']) ) {
         $temp         = round( 9/5*($phpObj['main']['temp']-273.15)+32 );    # F
         $city         = $phpObj['name'];
@@ -41,7 +46,7 @@ function getWeather($zip)
 
         $speech = "The current temperature for $city is $temp degrees.     $weather_desc with humidity at $humidity percent    and wind of $wind miles per hour.";
     } else {
-        $speech = 0;
+        $speech = "Sorry but we could not find that ZIP Code.";
     }
     return $speech;
 }
@@ -50,7 +55,7 @@ function awsSpeech($speech)
 {
     global $aws_token;
     global $aws_key;
-    
+
     require 'vendor/autoload.php';
     $s3 = new Aws\Polly\PollyClient([
       'version'     => 'latest',
@@ -77,10 +82,12 @@ function awsSpeech($speech)
     $cmd1 = '/usr/bin/mpg123 -w '."/tmp/".$tmpName.
       '.wav '."/tmp/".$tmpName.'.mp3';
     $cmd2 = '/usr/bin/sox '."/tmp/".$tmpName.'.wav '.
-      ' -e mu-law -r 8000 -c 1 -b 8 '."audio_temp/".$tmpName.".wav";
+      ' -e mu-law -r 8000 -c 1 -b 8 '."audio/".$tmpName.".wav";
     $out1 = exec($cmd1);
     $out2 = exec($cmd2);
-    return "audio_temp/".$tmpName.".wav";
+#    echo "out1: $out1\n";
+#    echo "out2: $out2\n";
+    return "audio/".$tmpName.".wav";
 }
 
 
@@ -91,16 +98,14 @@ if (!isset($_REQUEST["case"])) {
 }
 else if ($_REQUEST["case"] == "playzip") {
 
+  # Try to get the weather
   $speech = getWeather($_REQUEST["Digits"]);
 
-  if ( $speech ) {
-    try {
-      $audioPath = awsSpeech($speech);
-    } catch ( Exception $e ) {
-      $audioPath = "audio_perm/sorry_no_polly.wav";
-    }
-  } else {
-    $audioPath = "audio_perm/sorry_cant_find_zip.wav";
+  # Try to create the wav file
+  try {
+    $audioPath = awsSpeech($speech);
+  } catch ( Exception $e ) {
+    $audioPath = "audio_perm/aws_error.wav";
   }
 
   play("index.php",$audioPath);
