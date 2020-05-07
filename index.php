@@ -5,6 +5,7 @@ header("Content-Type: text/xml");
 
 echo '<?xml version="1.0" encoding="UTF-8" standalone="no" ?>';
 
+# Output the Gather element
 function gather($digits,$action,$audio)
 {
   echo "<Gather numDigits='$digits' action='$action'>";
@@ -12,6 +13,7 @@ function gather($digits,$action,$audio)
   echo "</Gather>";
 }
 
+# Output the Play element
 function play($audio, $action)
 {
   if ( isset($action) ) {
@@ -21,11 +23,14 @@ function play($audio, $action)
   }
 }
 
+# Output the Forward element
 function forward($location)
 {
   echo "<Forward >$location</Forward>";
 }
 
+# Get weather from the OpenWeatherMap API
+# You'll need to register to get a free key
 function getWeather($zip)
 {
     global $openweathermapkey;
@@ -52,6 +57,11 @@ function getWeather($zip)
     return $speech;
 }
 
+# Send text/ssml to AWS which returns a mp3 file.
+#  Converts the mp3 file to a wav file which Stratus can play to the caller
+#   Requires:
+#    /usr/bin/mpg123
+#    /usr/bin/sox
 function awsSpeech($speech)
 {
     global $aws_token;
