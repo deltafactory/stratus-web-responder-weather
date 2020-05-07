@@ -98,6 +98,7 @@ if (!isset($_REQUEST["case"])) {
 }
 else if ($_REQUEST["case"] == "playzip") {
 
+  # Try to get the weather
   $speech = getWeather($_REQUEST["Digits"]);
 
   # Try to create the wav file
