@@ -8,5 +8,5 @@ This sample creates a Web Responder for our Stratus platform that:
 4. Causes Stratus to play that wav file
 5. Repeats waiting for another zip.
 
-Note:  Rename includes/creds.sample.php to creds.php and update it with your keys
+Note:  Rename includes/creds.sample.php to includes/creds.php and update it with your keys
 
