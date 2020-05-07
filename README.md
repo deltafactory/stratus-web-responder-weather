@@ -1,6 +1,8 @@
 # stratus-weather-ivr
 
-This sample creates a Web Responder for our Stratus platform that:
+Contact our [Help Desk](https://www.spectrumvoip.com) as we will need to work with you to get calls pointed at your Web responder.
+
+# This sample creates a Web Responder for our Stratus platform that:
 
 1. Causes Stratus to play an announcement and wait for a 5 digit US ZIP code.
 1. Queries https://openweathermap.org/ with that ZIP code and gets back the current weather.
