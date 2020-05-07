@@ -9,6 +9,6 @@ This sample creates a Web Responder for our Stratus platform that:
 1. Repeats waiting for another zip.
 
 Notes:
-	1.  Requires /usr/bin/mpg123 and /usr/bin/sox to convert audio files created by Polly to format compatible with Stratus.
-	1.  Rename includes/creds.sample.php to includes/creds.php and update it with your keys.
+* Requires /usr/bin/mpg123 and /usr/bin/sox to convert audio files created by Polly to format compatible with Stratus.
+* Rename includes/creds.sample.php to includes/creds.php and update it with your keys.
 
