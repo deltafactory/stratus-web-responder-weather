@@ -2,6 +2,10 @@
 
 Contact our [Help Desk](https://www.spectrumvoip.com) as we will need to work with you to get calls pointed at your Web responder.
 
+## Our Stratus platform has the possibility to use "Web Responders".
+
+For instance, if someone dials into a DID on our system, we can cause that call to interact with your web server via HTTP/S API calls.  This sample queries a web API for weather data but it is not limited to just that.  You could use it to query your backend databases, salesforce, or many other systems.
+
 ## This sample creates a Web Responder for our Stratus platform that:
 
 1. Causes Stratus to play an announcement and wait for a 5 digit US ZIP code.
@@ -14,11 +18,9 @@ Notes:
 * Requires /usr/bin/mpg123 and /usr/bin/sox to convert audio files created by Polly to format compatible with Stratus.
 * Rename includes/creds.sample.php to includes/creds.php and update it with your keys.
 
-## Our Stratus platform has the possibility to use "Web Responders".
+## How Stratus Web Responders work:
 
-For instance, if someone dials into a DID on our system, we can cause that call to interact with your web server via HTTP/S API calls.
-
-Stratus will browse your web server and expects to receive XML "verbs" ( i.e. directions) and wav files.  Stratus will do things based on these instructions.  This gives you the ability create IVRs that do all sorts of things.
+Stratus will browse your web server and expects to receive XML "verbs" ( i.e. instructions ) and wav files.  Stratus will do things based on these instructions.  This gives you the ability create IVRs that do all sorts of things.
 
 # There are three verbs you can give Stratus:
 1. Play
